@@ -1,0 +1,17 @@
+{
+  "name": "Revision Village Enhancer",
+  "action": {},
+  "manifest_version": 3,
+  "version": "0.1",
+  "description": "Add question completed checkboxes and bookmarks to Revision Village",
+  "permissions": ["scripting"],
+  "content_scripts": [
+    {
+      "matches": ["https://www.revisionvillage.com/*"],
+      "css": ["styles.css"],
+      "js": ["main.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}

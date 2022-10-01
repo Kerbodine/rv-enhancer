@@ -22,6 +22,7 @@ async function fireContentLoadedEvent() {
     let questionId = img.split("/").pop().split(".")[0];
 
     let id = questionId; // id of checkbox question
+
     let state = JSON.parse(localStorage.getItem(id))?.checked; // check if checkbox is checked
 
     let container = document.createElement("div");
@@ -49,22 +50,20 @@ async function fireContentLoadedEvent() {
       let id = e.target.id;
       state = e.target.checked;
       let item = JSON.parse(localStorage.getItem(id));
+
+      let obj = { ...item };
+
       if (state) {
-        localStorage.setItem(
-          id,
-          JSON.stringify({
-            ...item,
-            checked: true,
-          })
-        ); // store url and question id in local storage
+        obj["checked"] = true;
+        obj["url"] = url;
       } else {
-        localStorage.setItem(
-          id,
-          JSON.stringify({
-            ...item,
-            checked: false,
-          })
-        );
+        delete obj.checked;
+      }
+
+      if (Object.entries(obj).length === 1 && "url" in obj) {
+        localStorage.removeItem(id);
+      } else {
+        localStorage.setItem(id, JSON.stringify(obj));
       }
     });
 
@@ -87,25 +86,24 @@ async function fireContentLoadedEvent() {
     bookmark.addEventListener("click", function (e) {
       let state = e.target.classList.contains("b-selected") ? true : false;
 
+      let obj = { ...item };
+
       if (state) {
         e.target.classList.remove("b-selected");
         bookmark.innerHTML = "☆";
+        delete obj.bookmarked;
       } else {
         e.target.classList.add("b-selected");
         bookmark.innerHTML = "★";
+        obj["bookmarked"] = true;
+        obj["url"] = url;
       }
 
-      let id = questionId;
-      let obj = {
-        ...item,
-        bookmarked: !state,
-      };
-      if (!state) {
-        // get current window scroll
-        let scroll = window.scrollY;
-        obj["scroll"] = scroll;
+      if (Object.entries(obj).length === 1 && "url" in obj) {
+        localStorage.removeItem(id);
+      } else {
+        localStorage.setItem(id, JSON.stringify(obj));
       }
-      localStorage.setItem(id, JSON.stringify(obj));
     });
 
     container.append(bookmark);
